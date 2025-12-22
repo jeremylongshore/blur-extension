@@ -73,16 +73,19 @@ class BlurExtension {
   async handleMessage(message, sender, sendResponse) {
     switch (message.type) {
       case 'SCREEN_SHARE_STARTED':
+        console.log('Background: Received SCREEN_SHARE_STARTED from tab', sender.tab?.id);
         await this.handleScreenShareStarted(sender.tab.id);
         sendResponse({ success: true });
         break;
 
       case 'SCREEN_SHARE_STOPPED':
+        console.log('Background: Received SCREEN_SHARE_STOPPED');
         await this.handleScreenShareStopped();
         sendResponse({ success: true });
         break;
 
       case 'GET_STATE':
+        console.log('Background: GET_STATE requested, isScreenSharing:', this.isScreenSharing);
         sendResponse({
           isScreenSharing: this.isScreenSharing,
           isBlurEnabled: this.isBlurEnabled,
