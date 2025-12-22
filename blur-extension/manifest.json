@@ -29,19 +29,23 @@
         "https://mail.google.com/*",
         "https://dashboard.stripe.com/*",
         "https://*.salesforce.com/*",
-        "https://*.lightning.force.com/*"
+        "https://*.lightning.force.com/*",
+        "file:///*"
       ],
       "js": ["src/content.js"],
       "css": ["src/blur.css"],
-      "run_at": "document_idle"
+      "run_at": "document_idle",
+      "match_about_blank": true
     },
     {
       "matches": [
         "https://meet.google.com/*",
-        "https://*.zoom.us/*"
+        "https://*.zoom.us/*",
+        "file:///*"
       ],
       "js": ["src/detector.js"],
-      "run_at": "document_start"
+      "run_at": "document_start",
+      "match_about_blank": true
     }
   ],
   "action": {

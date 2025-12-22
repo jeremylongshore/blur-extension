@@ -229,7 +229,8 @@ class SensitiveDataBlurrer {
 
   scanForSensitiveData(siteSelectors) {
     const dataTypes = this.state.settings?.dataTypes || {};
-    
+    console.log('Blur: Scanning with dataTypes:', dataTypes);
+
     // Combine all selectors to scan
     const elementsToScan = new Set();
     
@@ -273,6 +274,7 @@ class SensitiveDataBlurrer {
     });
     
     // Apply blur to identified elements
+    console.log(`Blur: Found ${elementsToScan.size} elements to blur`);
     elementsToScan.forEach(element => {
       this.applyBlur(element);
     });
@@ -292,6 +294,7 @@ class SensitiveDataBlurrer {
 
     for (const [type, pattern] of Object.entries(patterns)) {
       if (dataTypes[type] === true && pattern.test(text)) {
+        console.log(`Blur: Found ${type} in text:`, text.substring(0, 50));
         return true;
       }
     }
