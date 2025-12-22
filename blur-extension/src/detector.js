@@ -85,8 +85,15 @@ class ScreenShareDetector {
 
     console.log('Blur: Hook applied to getDisplayMedia');
 
-    // Re-apply hook every 2 seconds in case page overwrites it
-    setTimeout(() => this.hookGetDisplayMedia(), 2000);
+    // Re-apply hook a few times during page load, then stop
+    if (!this.hookAttempts) this.hookAttempts = 0;
+    this.hookAttempts++;
+
+    if (this.hookAttempts < 5) {
+      setTimeout(() => this.hookGetDisplayMedia(), 2000);
+    } else {
+      console.log('Blur: Hook monitoring complete');
+    }
   }
 
   monitorGoogleMeet() {

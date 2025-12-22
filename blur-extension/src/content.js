@@ -53,31 +53,51 @@ class SensitiveDataBlurrer {
 
   handleMessage(message, sender, sendResponse) {
     if (message.type === 'STATE_UPDATE') {
+      const oldState = this.state;
       this.state = {
         isScreenSharing: message.isScreenSharing,
         isBlurEnabled: message.isBlurEnabled,
         settings: message.settings
       };
-      this.updateBlurState();
+
+      // Only update if state actually changed
+      const sharingChanged = oldState?.isScreenSharing !== this.state.isScreenSharing;
+      const enabledChanged = oldState?.isBlurEnabled !== this.state.isBlurEnabled;
+      const settingsChanged = JSON.stringify(oldState?.settings) !== JSON.stringify(this.state.settings);
+
+      if (sharingChanged || enabledChanged) {
+        this.updateBlurState();
+      } else if (settingsChanged && this.state.isScreenSharing && this.state.isBlurEnabled) {
+        // Settings changed while blurring - just rescan without stopping
+        console.log('Blur: Settings updated, rescanning');
+        this.debouncedScan();
+      }
+
       sendResponse({ success: true });
     }
   }
 
   updateBlurState() {
     const shouldBlur = this.state.isScreenSharing && this.state.isBlurEnabled;
-    
+
     if (shouldBlur) {
       this.startBlurring();
     } else {
       this.stopBlurring();
     }
-    
+
     this.updateIndicator(shouldBlur);
   }
 
   startBlurring() {
     console.log('Blur: Starting blur protection');
-    
+
+    // Don't restart if already blurring
+    if (this.observer) {
+      console.log('Blur: Already blurring, skipping restart');
+      return;
+    }
+
     // Initial scan - wait for body
     if (document.body) {
       this.scanAndBlur();
