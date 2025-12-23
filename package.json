@@ -1,0 +1,58 @@
+{
+  "name": "blur-extension",
+  "version": "1.0.0",
+  "description": "Smart Privacy Protection for Screen Sharing - Automatically blur sensitive information during video calls",
+  "author": "Pablo (pabs-ai)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pabs-ai/blur-extension.git"
+  },
+  "scripts": {
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "lint": "eslint src/**/*.js",
+    "lint:fix": "eslint src/**/*.js --fix",
+    "format": "prettier --write \"src/**/*.{js,css,html}\"",
+    "format:check": "prettier --check \"src/**/*.{js,css,html}\"",
+    "build": "node scripts/build.js",
+    "package:chrome": "node scripts/package-chrome.js",
+    "package:firefox": "node scripts/package-firefox.js",
+    "validate": "npm run lint && npm run format:check && npm test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "prettier": "^3.2.5"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/**/*.test.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 70,
+        "functions": 70,
+        "lines": 70,
+        "statements": 70
+      }
+    },
+    "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"]
+  },
+  "keywords": [
+    "chrome-extension",
+    "privacy",
+    "screen-sharing",
+    "blur",
+    "security",
+    "zoom",
+    "google-meet",
+    "data-protection"
+  ]
+}
