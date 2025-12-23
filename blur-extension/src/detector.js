@@ -35,20 +35,12 @@ class ScreenShareDetector {
   }
 
   startMonitoring() {
-    // Hook into getDisplayMedia API
+    // Hook into getDisplayMedia API - this is the most reliable method
     this.hookGetDisplayMedia();
-    
-    // Platform-specific monitoring
-    if (this.platform === 'meet') {
-      this.monitorGoogleMeet();
-    } else if (this.platform === 'zoom') {
-      this.monitorZoom();
-    }
-    
-    // Fallback: Check for screen share indicators in DOM
-    this.checkInterval = setInterval(() => {
-      this.checkDOMForIndicators();
-    }, 1000);
+
+    // DISABLE DOM-based detection - it causes flickering due to DOM changes
+    // Only rely on the getDisplayMedia hook which is stable
+    console.log('Blur: Using getDisplayMedia hook only (DOM detection disabled to prevent flickering)');
   }
 
   hookGetDisplayMedia() {
