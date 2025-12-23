@@ -1,4 +1,5 @@
 // Content Script - Detects and blurs sensitive information
+console.log('Blur: content.js file loaded!');
 
 class SensitiveDataBlurrer {
   constructor() {
