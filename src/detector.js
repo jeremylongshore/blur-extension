@@ -1,6 +1,14 @@
 // Screen Share Detector - Monitors conferencing apps for active screen sharing
 
 class ScreenShareDetector {
+  static TEAMS_SELECTORS = [
+    '[data-tid="screen-sharing-indicator"]',
+    '[data-tid="stop-screen-share-button"]',
+    '.ts-calling-screen-share-banner',
+    '[aria-label*="presenting"]',
+    '[aria-label*="Stop presenting"]'
+  ];
+
   constructor() {
     this.isSharing = false;
     this.checkInterval = null;
@@ -154,41 +162,30 @@ class ScreenShareDetector {
 
   monitorTeams() {
     // Microsoft Teams specific monitoring
-    const observer = new MutationObserver((mutations) => {
-      // Look for Teams screen sharing indicators
-      // Teams uses different selectors depending on the version
-      const sharingIndicator = document.querySelector('[data-tid="screen-sharing-indicator"]');
-      const stopShareButton = document.querySelector('[data-tid="stop-screen-share-button"]');
-      const sharingBanner = document.querySelector('.ts-calling-screen-share-banner');
-      const presentingLabel = document.querySelector('[aria-label*="presenting"]');
-      const stopPresenting = document.querySelector('[aria-label*="Stop presenting"]');
+    const combinedSelector = ScreenShareDetector.TEAMS_SELECTORS.join(',');
 
-      if (sharingIndicator || stopShareButton || sharingBanner || presentingLabel || stopPresenting) {
-        if (!this.isSharing) {
-          this.handleScreenShareStart();
-        }
-      } else {
-        if (this.isSharing) {
-          this.handleScreenShareStop();
-        }
+    const observer = new MutationObserver(() => {
+      const isCurrentlySharing = document.querySelector(combinedSelector) !== null;
+
+      if (isCurrentlySharing && !this.isSharing) {
+        this.handleScreenShareStart();
+      } else if (!isCurrentlySharing && this.isSharing) {
+        this.handleScreenShareStop();
       }
     });
 
-    // Wait for body to be available
-    if (document.body) {
+    const observeBody = () => {
       observer.observe(document.body, {
         childList: true,
         subtree: true,
         attributes: true
       });
+    };
+
+    if (document.body) {
+      observeBody();
     } else {
-      document.addEventListener('DOMContentLoaded', () => {
-        observer.observe(document.body, {
-          childList: true,
-          subtree: true,
-          attributes: true
-        });
-      });
+      document.addEventListener('DOMContentLoaded', observeBody);
     }
   }
 
@@ -203,10 +200,7 @@ class ScreenShareDetector {
       '[aria-label*="Stop Share"]',
       '[aria-label*="stop sharing"]',
       // Microsoft Teams
-      '[data-tid="screen-sharing-indicator"]',
-      '[data-tid="stop-screen-share-button"]',
-      '.ts-calling-screen-share-banner',
-      '[aria-label*="Stop presenting"]'
+      ...ScreenShareDetector.TEAMS_SELECTORS
     ];
 
     const hasIndicator = indicators.some(selector => {
